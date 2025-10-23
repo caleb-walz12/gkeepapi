@@ -198,7 +198,7 @@ class Element:
                 if isinstance(val, list | dict):
                     continue
 
-                val_a = raw[key]
+                val_a = val
                 val_b = s_raw[key]
                 # Python strftime's 'z' format specifier includes microseconds, but the response from GKeep
                 # only has milliseconds. This causes a string mismatch, so we construct datetime objects
@@ -215,7 +215,7 @@ class Element:
                         "Different value for %s key %s: %s != %s",
                         type(self),
                         key,
-                        raw[key],
+                        val,
                         s_raw[key],
                     )
         elif isinstance(raw, list) and len(raw) != len(s_raw):
@@ -312,7 +312,7 @@ class Annotation(Element):
 class WebLink(Annotation):
     """Represents a link annotation on a :class:`TopLevelNode`."""
 
-    __slots__ = ("_title", "_url", "_image_url", "_provenance_url", "_description")
+    __slots__ = ("_description", "_image_url", "_provenance_url", "_title", "_url")
 
     def __init__(self) -> None:
         """Construct a weblink"""
@@ -670,7 +670,7 @@ class NodeAnnotations(Element):
 class NodeTimestamps(Element):
     """Represents the timestamps associated with a :class:`TopLevelNode`."""
 
-    __slots__ = ("_created", "_deleted", "_trashed", "_updated", "_edited")
+    __slots__ = ("_created", "_deleted", "_edited", "_trashed", "_updated")
 
     TZ_FMT = "%Y-%m-%dT%H:%M:%S.%fZ"
 
@@ -836,9 +836,9 @@ class NodeSettings(Element):
     """Represents the settings associated with a :class:`TopLevelNode`."""
 
     __slots__ = (
-        "_new_listitem_placement",
-        "_graveyard_state",
         "_checked_listitems_policy",
+        "_graveyard_state",
+        "_new_listitem_placement",
     )
 
     def __init__(self) -> None:
@@ -1055,7 +1055,7 @@ class TimestampsMixin:
 class Label(Element, TimestampsMixin):
     """Represents a label."""
 
-    __slots__ = ("id", "_name", "timestamps", "_merged")
+    __slots__ = ("_merged", "_name", "id", "timestamps")
 
     def __init__(self) -> None:
         """Construct a label"""
@@ -1214,19 +1214,19 @@ class Node(Element, TimestampsMixin):
     """Node base class."""
 
     __slots__ = (
-        "parent",
-        "id",
-        "server_id",
-        "parent_id",
-        "type",
-        "_sort",
-        "_version",
-        "_text",
         "_children",
-        "timestamps",
-        "settings",
-        "annotations",
         "_moved",
+        "_sort",
+        "_text",
+        "_version",
+        "annotations",
+        "id",
+        "parent",
+        "parent_id",
+        "server_id",
+        "settings",
+        "timestamps",
+        "type",
     )
 
     def __init__(
@@ -1429,7 +1429,7 @@ class Root(Node):
 class TopLevelNode(Node):
     """Top level node base class."""
 
-    __slots__ = ("_color", "_archived", "_pinned", "_title", "labels", "collaborators")
+    __slots__ = ("_archived", "_color", "_pinned", "_title", "collaborators", "labels")
 
     _TYPE = None
 
@@ -1575,12 +1575,12 @@ class ListItem(Node):
     """
 
     __slots__ = (
+        "_checked",
+        "_subitems",
         "parent_item",
         "parent_server_id",
-        "super_list_item_id",
         "prev_super_list_item_id",
-        "_subitems",
-        "_checked",
+        "super_list_item_id",
     )
 
     def __init__(
@@ -1774,7 +1774,7 @@ class List(TopLevelNode):
         items = list(self.items)
         if isinstance(sort, int):
             node.sort = sort
-        elif isinstance(sort, NewListItemPlacementValue) and len(items):
+        elif isinstance(sort, NewListItemPlacementValue) and items:
             func = max
             delta = self.SORT_DELTA
             if sort == NewListItemPlacementValue.Bottom:
@@ -1902,7 +1902,7 @@ class List(TopLevelNode):
 class NodeBlob(Element):
     """Represents a blob descriptor."""
 
-    __slots__ = ("blob_id", "type", "_media_id", "_mimetype")
+    __slots__ = ("_media_id", "_mimetype", "blob_id", "type")
 
     _TYPE = None
 
@@ -1972,12 +1972,12 @@ class NodeImage(NodeBlob):
     """Represents an image blob."""
 
     __slots__ = (
-        "_is_uploaded",
-        "_width",
-        "_height",
         "_byte_size",
         "_extracted_text",
         "_extraction_status",
+        "_height",
+        "_is_uploaded",
+        "_width",
     )
 
     _TYPE = BlobType.Image
@@ -2060,7 +2060,7 @@ class NodeImage(NodeBlob):
 class NodeDrawing(NodeBlob):
     """Represents a drawing blob."""
 
-    __slots__ = ("_extracted_text", "_extraction_status", "_drawing_info")
+    __slots__ = ("_drawing_info", "_extracted_text", "_extraction_status")
 
     _TYPE = BlobType.Drawing
 
@@ -2108,12 +2108,12 @@ class NodeDrawingInfo(Element):
     """Represents information about a drawing blob."""
 
     __slots__ = (
+        "_ink_hash",
+        "_snapshot_fingerprint",
+        "_snapshot_proto_fprint",
+        "_thumbnail_generated_time",
         "drawing_id",
         "snapshot",
-        "_snapshot_fingerprint",
-        "_thumbnail_generated_time",
-        "_ink_hash",
-        "_snapshot_proto_fprint",
     )
 
     def __init__(self) -> None:

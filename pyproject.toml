@@ -27,13 +27,6 @@ dependencies = [
   "future >= 0.16.0",
 ]
 
-[project.optional-dependencies]
-dev = [
-  "ruff>=0.1.14",
-  "coverage>=7.2.5",
-  "Sphinx>=7.2.6"
-]
-
 [project.urls]
 "Homepage" = "https://github.com/kiwiz/gkeepapi"
 "Bug Tracker" = "https://github.com/kiwiz/gkeepapi/issues"
@@ -119,3 +112,12 @@ ignore = [
 
 [tool.ruff.pydocstyle]
 convention = "google"
+
+[dependency-groups]
+dev = [
+  "Sphinx >= 7.2.6"
+  "ruff >= 0.1.14",
+  "coverage >= 7.2.5",
+  "build >= 1.3.0",
+  "twine >= 6.2.0",
+]
