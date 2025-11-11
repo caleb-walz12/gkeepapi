@@ -900,7 +900,7 @@ class Keep:
 
     def createNote(
         self, title: str | None = None, text: str | None = None
-    ) -> _node.Node:
+    ) -> _node.Note:
         """Create a new managed note. Any changes to the note will be uploaded when :py:meth:`sync` is called.
 
         Args:
